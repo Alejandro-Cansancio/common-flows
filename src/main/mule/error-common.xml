@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+  <error-handler name="api-error-handler">
+    <on-error-propagate type="APIKIT:BAD_REQUEST">
+			<ee:transform doc:name="Response Message" doc:id="947b1877-345f-43ab-86be-db8444d4cd0c">
+				<ee:message>
+					<ee:set-payload resource="dwl/c-bad-request-error-message.dwl" />
+				</ee:message>
+				<ee:variables>
+				</ee:variables>
+			</ee:transform>
+			<set-variable value="#[400]" doc:name="httpStatus" doc:id="f0f1681d-2c57-48fa-951a-f0a1b265b15c" variableName="httpStatus"/>
+    
+</on-error-propagate>
+    <on-error-propagate type="APIKIT:NOT_FOUND">
+      <ee:transform doc:name="Response Message" doc:id="c7dea7f4-6379-4c57-bb34-ce32728da983">
+        <ee:message>
+					<ee:set-payload resource="dwl/c-not-found-error-message.dwl" />
+        
+</ee:message>
+        <ee:variables>
+        </ee:variables>
+      </ee:transform>
+			<set-variable value="#[404]" doc:name="httpStatus" doc:id="7198f1f8-ef7f-447b-a660-28f58d4d556b" variableName="httpStatus" />
+    
+</on-error-propagate>
+    <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+			<ee:transform doc:name="Response Message" doc:id="9a781e3f-1509-436c-a081-ddcdc6a3c6ee">
+				<ee:message>
+					<ee:set-payload resource="dwl/c-method-not-allowed-error-message.dwl" />
+				</ee:message>
+				<ee:variables />
+			</ee:transform>
+			<set-variable value="#[405]" doc:name="httpStatus" doc:id="04089ccc-9562-4a86-a447-b83860d94a98" variableName="httpStatus" />
+    
+</on-error-propagate>
+    <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+			<ee:transform doc:name="Response Message" doc:id="9a73f377-8097-47f0-93ea-b21762952497">
+				<ee:message>
+					<ee:set-payload resource="dwl/c-not-acceptable-error-message.dwl" />
+				</ee:message>
+				<ee:variables />
+			</ee:transform>
+			<set-variable value="#[406]" doc:name="httpStatus" doc:id="bfca2c5b-574b-4d55-a3b1-354040c44c53" variableName="httpStatus" />
+    
+</on-error-propagate>
+    <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+			<ee:transform doc:name="Response Message" doc:id="ee02862a-f064-4093-9ef3-18b8ef74a5c0">
+				<ee:message>
+					<ee:set-payload resource="dwl/c-unsupported-media-type-error-message.dwl" />
+				</ee:message>
+				<ee:variables />
+			</ee:transform>
+			<set-variable value="#[415]" doc:name="httpStatus" doc:id="d46a5b67-27a9-4b29-8937-e8af2217b25f" variableName="httpStatus" />
+    
+</on-error-propagate>
+    <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+			<ee:transform doc:name="Response Message" doc:id="596cd864-e9c1-4214-851e-30040d337645">
+				<ee:message>
+					<ee:set-payload resource="dwl/c-not-implemented-error-message.dwl" />
+				</ee:message>
+				<ee:variables />
+			</ee:transform>
+			<set-variable value="#[501]" doc:name="httpStatus" doc:id="c88c2d12-a624-49b7-9d42-3471d17aed1c" variableName="httpStatus" />
+    
+</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="ebbea329-0fd7-4eb2-ad58-346cdb41764d" type="ANY">
+			<ee:transform doc:name="Response Message" doc:id="9d50e2ac-aa7e-450a-b36a-d42f40ff8a74">
+				<ee:message>
+					<ee:set-payload resource="dwl/c-internal-server-error-message.dwl" />
+				</ee:message>
+				<ee:variables />
+			</ee:transform>
+			<set-variable value="#[500]" doc:name="httpStatus" doc:id="b5d7d1de-d94a-477d-88c1-3cdab5ff9ba7" variableName="httpStatus" />
+		</on-error-propagate>
+  
+</error-handler>
+  <error-handler name="api-console-error-handler">
+    <on-error-propagate type="APIKIT:NOT_FOUND">
+      <ee:transform>
+        <ee:message>
+          <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	errorCode: 				404,
+	correlationdId: 		vars.transactionId default correlationId,
+	timeStamp: 				now() as String {format: "yyyy-MM-dd'T'HH:mm:ss"},
+}]]></ee:set-payload>
+        </ee:message>
+        <ee:variables>
+          <ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+        </ee:variables>
+      </ee:transform>
+			<set-variable value="#[404]" doc:name="httpStatus" doc:id="aa1e9c58-133b-4f8e-a279-086eaf4c7ee1" variableName="httpStatus" />
+    
+</on-error-propagate>
+  </error-handler>
+</mule>
